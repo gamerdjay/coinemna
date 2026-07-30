@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenue au Coin de Emna !</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #ffe6f2;
+            color: #4a2e35;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Canvas Confetti Background Animation */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Header / Banner */
+        header {
+            background: linear-gradient(135deg, #ff85c0 0%, #ff4d94 100%);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+            box-shadow: 0 8px 20px rgba(255, 77, 148, 0.3);
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            position: relative;
+        }
+
+        header h1 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 3.2rem;
+            text-shadow: 3px 3px 0px #b30059;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        header p {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.25);
+            display: inline-block;
+            padding: 8px 22px;
+            border-radius: 25px;
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Sections / Cards */
+        .card {
+            background: #ffffff;
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 25px rgba(255, 105, 180, 0.15);
+            border: 3px solid #ffb3d9;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 105, 180, 0.25);
+        }
+
+        .card-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2rem;
+            color: #ff3385;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title span {
+            font-size: 2.2rem;
+        }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .card-content {
+                flex-direction: row;
+            }
+            .card-content.reverse {
+                flex-direction: row-reverse;
+            }
+        }
+
+        .card-text {
+            flex: 1;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: #5a3d46;
+        }
+
+        .card-text ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .card-text ul li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .card-text ul li::before {
+            content: "💖";
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .card-img-wrapper {
+            flex: 1;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            border: 4px solid #ffe6f2;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .card-img-wrapper:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #ff4d94;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        /* Floating decoration */
+        .badge {
+            background-color: #ff3385;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <header>
+        <h1>🎉 Bienvenue au Coin de Emna ! 🎉</h1>
+        <p>Un univers créatif, magique et rempli de surprises ✨</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Section 1 : Présentation du Coin de Emna -->
+        <section class="card">
+            <div class="card-title">
+                <span>🎨</span>
+                <h2>Le Coin de Emna : Plein de choses intéressantes !</h2>
+            </div>
+            <div class="card-content">
+                <div class="card-text">
+                    <span class="badge">Espace Créatif</span>
+                    <p>
+                        Bienvenue dans le véritable cœur créatif d'Emna ! Cet espace est minutieusement organisé pour laisser libre cours à l'imagination et à l'art.
+                    </p>
+                    <ul>
+                        <li>Un grand panneau perforé pour ranger les fournitures et stylos.</li>
+                        <li>Une zone d'écriture et de dessin très bien équipée.</li>
+                        <li>Des bacs de rangement colorés pour tous les projets artistiques.</li>
+                        <li>Une chaise Batman ultra stylée pour travailler confortablement !</li>
+                    </ul>
+                </div>
+                <div class="card-img-wrapper">
+                    <img src="2.jpeg" alt="Le coin de Emna avec son bureau et ses rangements">
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2 : Exposition Tour Eiffel -->
+        <section class="card">
+            <div class="card-title">
+                <span>🗼</span>
+                <h2>L'Exposition de Tour Eiffel</h2>
+            </div>
+            <div class="card-content reverse">
+                <div class="card-text">
+                    <span class="badge">Collection Prestige</span>
+                    <p>
+                        Emna présente sa magnifique collection dédiée à la célèbre Tour Eiffel ! Un coin spécialement aménagé mettant en valeur la beauté de la capitale française.
+                    </p>
+                    <ul>
+                        <li>Une grande Tour Eiffel dorée étincelante au centre de l'exposition.</li>
+                        <li>Une collection de porte-clés Tour Eiffel colorés (rose, bronze, rouge...).</li>
+                        <li>Mise en scène élégante sur une étagère perforée moderne.</li>
+                    </ul>
+                </div>
+                <div class="card-img-wrapper">
+                    <img src="1.jpeg" alt="Exposition Tour Eiffel dorée et figurines">
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3 : Maison Gabbychat -->
+        <section class="card">
+            <div class="card-title">
+                <span>🏰</span>
+                <h2>La Maison Gabbychat</h2>
+            </div>
+            <div class="card-content">
+                <div class="card-text">
+                    <span class="badge">Espace Jeu & Rêve</span>
+                    <p>
+                        Découvrez la fabuleuse Maison Gabbychat ! Un bâtiment multicolore complet prêt pour toutes les aventures imaginables.
+                    </p>
+                    <ul>
+                        <li><strong>Toutes les salles équipées :</strong> Chambre, salle de bain, cuisine et espaces de jeu à chaque étage.</li>
+                        <li><strong>Deux balcons féeriques :</strong> Situés sur les côtés pour admirer la vue.</li>
+                        <li>Un ascenseur central violet pour passer d'un étage à un autre instantanément.</li>
+                        <li>Un toboggan bleu pour des descentes amusantes !</li>
+                    </ul>
+                </div>
+                <div class="card-img-wrapper">
+                    <img src="3.jpeg" alt="Maison Gabbychat avec toutes ses pièces et balcons">
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4 : Nouveau Système de Boîte aux Lettres -->
+        <section class="card">
+            <div class="card-title">
+                <span>📬</span>
+                <h2>Le Nouveau Système de Boîte aux Lettres</h2>
+            </div>
+            <div class="card-content reverse">
+                <div class="card-text">
+                    <span class="badge">Innovation & Design</span>
+                    <p>
+                        Découvrez la toute dernière création d'Emna : un système de boîte aux lettres fait maison, ultra personnalisé et sécurisé !
+                    </p>
+                    <ul>
+                        <li>Décorée avec de magnifiques strass brillants et des paillettes scintillantes.</li>
+                        <li>Un motif cœur rose pailleté pour recevoir du courrier plein d'amour.</li>
+                        <li>Étiquette officielle complète indiquant l'adresse : <em>19 rue François Plasson, maison n°4 - Coin de Emna</em>.</li>
+                        <li>Une fente large parfaite pour glisser des petits mots doux et des lettres secretes.</li>
+                    </ul>
+                </div>
+                <div class="card-img-wrapper">
+                    <img src="4.jpeg" alt="Boîte aux lettres personnalisée d'Emna avec paillettes et strass">
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>💖 Fait avec amour pour Le Coin de Emna 💖</p>
+    </footer>
+
+    <!-- Confetti Script -->
+    <script>
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const confettiCount = 120;
+        const confettis = [];
+        const colors = ['#ff69b4', '#ff1493', '#ffb6c1', '#ffffff', '#ffd700', '#ff85c0'];
+
+        for (let i = 0; i < confettiCount; i++) {
+            confettis.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height - canvas.height,
+                size: Math.random() * 8 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speedY: Math.random() * 3 + 2,
+                speedX: Math.random() * 2 - 1,
+                spin: Math.random() * 360,
+                spinSpeed: Math.random() * 6 - 3
+            });
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            confettis.forEach(c => {
+                c.y += c.speedY;
+                c.x += c.speedX;
+                c.spin += c.spinSpeed;
+
+                if (c.y > canvas.height) {
+                    c.y = -10;
+                    c.x = Math.random() * canvas.width;
+                }
+
+                ctx.save();
+                ctx.translate(c.x, c.y);
+                ctx.rotate((c.spin * Math.PI) / 180);
+                ctx.fillStyle = c.color;
+                ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
+                ctx.restore();
+            });
+
+            requestAnimationFrame(animateConfetti);
+        }
+
+        animateConfetti();
+    </script>
+</body>
+</html>
