@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Les commandes de Emna djoudi</title>
+  <title>Les commandes de Emna</title>
   
-  <!-- Configuration pour iPhone / Web App -->
+  <!-- Configuration pour Web App iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Commandes Emna">
@@ -80,18 +80,6 @@
       background-color: #ff4757;
     }
 
-    .btn-notif {
-      background-color: #2e86de;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-bottom: 20px;
-      width: 100%;
-    }
-
     h2 {
       color: #555;
       font-size: 1.3rem;
@@ -155,9 +143,6 @@
   <div class="container">
     <h1>Les commandes de Emna</h1>
 
-    <!-- Bouton pour autoriser les notifications -->
-    <button id="notifBtn" class="btn-notif">🔔 Activer les notifications</button>
-
     <!-- Formulaire d'ajout de commande -->
     <div class="form-group">
       <textarea id="orderInput" placeholder="Écrivez votre commande ici..."></textarea>
@@ -186,6 +171,7 @@
       orderBy 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    // Configuration Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyD00HecbfOqkgB7MqjI7eXk9ujXzO1d30U",
       authDomain: "confiture-emna.firebaseapp.com",
@@ -196,30 +182,19 @@
       measurementId: "G-T7M8R5RPW6"
     };
 
+    // Initialisation Firebase & Firestore
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const ordersRef = collection(db, "commandes");
 
+    // Lien Webhook Pushcut
+    const pushcutUrl = "https://api.pushcut.io/sjQ17NXv83FiaxX2uv7W4/notifications/Commande";
+
     const orderInput = document.getElementById("orderInput");
     const submitBtn = document.getElementById("submitBtn");
     const ordersList = document.getElementById("ordersList");
-    const notifBtn = document.getElementById("notifBtn");
 
-    // Activation de la permission de notification
-    notifBtn.addEventListener("click", () => {
-      if ("Notification" in window) {
-        Notification.requestPermission().then((permission) => {
-          if (permission === "granted") {
-            alert("Notifications activées !");
-            notifBtn.style.display = "none";
-          }
-        });
-      } else {
-        alert("Les notifications ne sont pas supportées sur ce navigateur.");
-      }
-    });
-
-    // 1. Ajouter une nouvelle commande dans Firestore
+    // 1. Ajouter une nouvelle commande et déclencher Pushcut
     async function addOrder() {
       const text = orderInput.value.trim();
       if (!text) {
@@ -228,10 +203,17 @@
       }
 
       try {
+        // Enregistrement Firestore
         await addDoc(ordersRef, {
           texte: text,
           createdAt: serverTimestamp()
         });
+
+        // Envoi simple pour déclencher la notification Pushcut gratuite
+        fetch(pushcutUrl, {
+          method: "POST"
+        }).catch(err => console.error("Erreur Pushcut:", err));
+
         orderInput.value = "";
       } catch (error) {
         console.error("Erreur lors de l'ajout : ", error);
@@ -241,28 +223,10 @@
 
     submitBtn.addEventListener("click", addOrder);
 
-    // Flag pour éviter d'envoyer des notifications pour l'historique au premier chargement
-    let isInitialLoad = true;
-
     // 2. Écouter la base de données en temps réel
     const q = query(ordersRef, orderBy("createdAt", "desc"));
     
     onSnapshot(q, (snapshot) => {
-      // Détection des ajouts en temps réel pour la notification
-      if (!isInitialLoad) {
-        snapshot.docChanges().forEach((change) => {
-          if (change.type === "added") {
-            const data = change.doc.data();
-            if (Notification.permission === "granted") {
-              new Notification("🛍️ Nouvelle commande !", {
-                body: data.texte
-              });
-            }
-          }
-        });
-      }
-      isInitialLoad = false;
-
       ordersList.innerHTML = "";
 
       if (snapshot.empty) {
