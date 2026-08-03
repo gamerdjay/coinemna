@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Les commandes de Emna</title>
+  
+  <!-- Configuration pour Web App iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Commandes Emna">
+
+  <!-- Icônes de l'application (fichiers séparés à placer dans le même dossier que ce HTML) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: max(40px, env(safe-area-inset-top)) 15px 40px 15px;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    /* Badge Compteur */
+    .badge-counter {
+      background-color: #ff6b81;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+      box-shadow: 0 2px 5px rgba(255, 107, 129, 0.4);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 90px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      resize: vertical;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #ff6b81;
+    }
+
+    button.btn-add {
+      background-color: #ff6b81;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button.btn-add:hover {
+      background-color: #ff4757;
+    }
+
+    h2 {
+      color: #555;
+      font-size: 1.3rem;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 8px;
+    }
+
+    .order-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .order-item {
+      background-color: #fafafa;
+      border: 1px solid #eaeaea;
+      padding: 15px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .order-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      word-break: break-word;
+    }
+
+    .order-text {
+      color: #2c3e50;
+      font-size: 1rem;
+      flex-grow: 1;
+      padding-right: 10px;
+      font-weight: 500;
+    }
+
+    .order-date {
+      color: #999;
+      font-size: 0.75rem;
+      font-weight: 400;
+      margin-top: 2px;
+      display: block;
+    }
+
+    .order-text-wrap {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      padding-right: 10px;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #ff4757;
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .delete-btn:hover {
+      background-color: #ffe0e3;
+    }
+
+    /* Modal / QR Code Container */
+    .qr-container {
+      display: none;
+      text-align: center;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px dashed #ff6b81;
+      margin-top: 5px;
+    }
+
+    .qr-container.active {
+      display: block;
+    }
+
+    .qr-container img {
+      width: 130px;
+      height: 130px;
+    }
+
+    .qr-btn {
+      background: #f0f0f0;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #555;
+      transition: background 0.2s;
+    }
+
+    .qr-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header-title">
+      <h1>Commandes Emna</h1>
+      <!-- 1. COMPTEUR EN DIRECT -->
+      <span class="badge-counter" id="orderCounter">0</span>
+    </div>
+
+    <!-- Formulaire d'ajout de commande -->
+    <div class="form-group">
+      <textarea id="orderInput" placeholder="Écrivez votre commande ici..."></textarea>
+      <button class="btn-add" id="submitBtn">Valider la commande</button>
+    </div>
+
+    <!-- Zone d'affichage des commandes en cours -->
+    <h2>Commandes en cours</h2>
+    <ul class="order-list" id="ordersList">
+      <li class="empty-msg">Chargement des commandes...</li>
+    </ul>
+  </div>
+
+  <!-- Firebase JavaScript SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      deleteDoc, 
+      doc, 
+      onSnapshot, 
+      serverTimestamp, 
+      query, 
+      orderBy 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Configuration Firebase[cite: 1]
+    const firebaseConfig = {
+      apiKey: "AIzaSyD00HecbfOqkgB7MqjI7eXk9ujXzO1d30U",
+      authDomain: "confiture-emna.firebaseapp.com",
+      projectId: "confiture-emna",
+      storageBucket: "confiture-emna.firebasestorage.app",
+      messagingSenderId: "1091953479191",
+      appId: "1:1091953479191:web:a7ecb6bc756e7aded31652",
+      measurementId: "G-T7M8R5RPW6"
+    };
+
+    // Initialisation Firebase & Firestore[cite: 1]
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const ordersRef = collection(db, "commandes");
+
+    // Lien Webhook Pushcut[cite: 1]
+    const pushcutUrl = "https://api.pushcut.io/sjQ17NXv83FiaxX2uv7W4/notifications/Commande";
+
+    const orderInput = document.getElementById("orderInput");
+    const submitBtn = document.getElementById("submitBtn");
+    const ordersList = document.getElementById("ordersList");
+    const orderCounter = document.getElementById("orderCounter");
+
+    // Traitement automatique de la suppression via scan QR Code dans l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const completeId = urlParams.get('complete');
+    if (completeId) {
+      removeOrder(completeId).then(() => {
+        alert("Commande marquée comme livrée !");
+        window.history.replaceState({}, document.title, window.location.pathname);
+      });
+    }
+
+    // Formate le Timestamp Firestore (createdAt) en date/heure lisible (fr-FR)
+    function formatOrderDate(timestamp) {
+      if (!timestamp || typeof timestamp.toDate !== "function") return "";
+      const date = timestamp.toDate();
+      const now = new Date();
+      const isToday = date.toDateString() === now.toDateString();
+
+      const timeStr = date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
+      if (isToday) {
+        return `Aujourd'hui à ${timeStr}`;
+      }
+
+      const dateStr = date.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" });
+      return `${dateStr} à ${timeStr}`;
+    }
+
+    // 1. Ajouter une nouvelle commande[cite: 1]
+    async function addOrder() {
+      const text = orderInput.value.trim();
+      if (!text) {
+        alert("Veuillez écrire une commande avant de valider.");
+        return;
+      }
+
+      try {
+        await addDoc(ordersRef, {
+          texte: text,
+          createdAt: serverTimestamp()
+        });
+
+        fetch(pushcutUrl, { method: "POST" }).catch(err => console.error("Erreur Pushcut:", err));
+
+        orderInput.value = "";
+      } catch (error) {
+        console.error("Erreur lors de l'ajout : ", error);
+        alert("Erreur lors de la validation de la commande.");
+      }
+    }
+
+    submitBtn.addEventListener("click", addOrder);
+
+    // 2. Écouter la base de données et mettre à jour le compteur[cite: 1]
+    const q = query(ordersRef, orderBy("createdAt", "desc"));
+    
+    onSnapshot(q, (snapshot) => {
+      ordersList.innerHTML = "";
+
+      // Mettre à jour le badge avec le nombre en direct
+      orderCounter.textContent = snapshot.size;
+
+      if (snapshot.empty) {
+        ordersList.innerHTML = '<li class="empty-msg">Aucune commande en cours.</li>';
+        return;
+      }
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const id = docSnap.id;
+
+        const li = document.createElement("li");
+        li.className = "order-item";
+
+        // Zone principale de la commande
+        const orderMain = document.createElement("div");
+        orderMain.className = "order-main";
+
+        const textWrap = document.createElement("div");
+        textWrap.className = "order-text-wrap";
+
+        const span = document.createElement("span");
+        span.className = "order-text";
+        span.textContent = data.texte;
+        textWrap.appendChild(span);
+
+        // Affichage de la date et l'heure de création
+        if (data.createdAt) {
+          const dateSpan = document.createElement("span");
+          dateSpan.className = "order-date";
+          dateSpan.textContent = formatOrderDate(data.createdAt);
+          textWrap.appendChild(dateSpan);
+        }
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        // Bouton QR Code
+        const qrBtn = document.createElement("button");
+        qrBtn.className = "qr-btn";
+        qrBtn.innerHTML = "📷 QR";
+        qrBtn.title = "Afficher le QR Code de livraison";
+
+        // Zone d'affichage du QR Code
+        const qrContainer = document.createElement("div");
+        qrContainer.className = "qr-container";
+
+        // Lien direct de validation pour le QR Code
+        const validationUrl = encodeURIComponent(`${window.location.origin}${window.location.pathname}?complete=${id}`);
+        const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${validationUrl}`;
+        
+        qrContainer.innerHTML = `
+          <img src="${qrImgUrl}" alt="QR Code validation">
+          <p style="margin:5px 0 0; font-size:0.75rem; color:#666;">Scannez pour valider la livraison</p>
+        `;
+
+        qrBtn.addEventListener("click", () => {
+          qrContainer.classList.toggle("active");
+        });
+
+        // Bouton de suppression manuel
+        const deleteBtn = document.createElement("button");
+        deleteBtn.className = "delete-btn";
+        deleteBtn.innerHTML = "&times;";
+        deleteBtn.title = "Marquer comme passée";
+        deleteBtn.addEventListener("click", () => removeOrder(id));
+
+        actions.appendChild(qrBtn);
+        actions.appendChild(deleteBtn);
+        orderMain.appendChild(textWrap);
+        orderMain.appendChild(actions);
+
+        li.appendChild(orderMain);
+        li.appendChild(qrContainer);
+        ordersList.appendChild(li);
+      });
+    });
+
+    // 3. Supprimer une commande[cite: 1]
+    async function removeOrder(id) {
+      try {
+        await deleteDoc(doc(db, "commandes", id));
+      } catch (error) {
+        console.error("Erreur lors de la suppression : ", error);
+      }
+    }
+  </script>
+</body>
+</html>
